@@ -32,3 +32,10 @@ exports.getVcodeImage = (req, res) => {
     });
     res.end(imgbase64);
 }
+
+/**
+ * 暴露的返回注册页面的方法 
+ */
+exports.getRegisterPage = (req,res)=>{
+    res.sendFile(path.join(__dirname, "../statics/views/register.html"))
+}
