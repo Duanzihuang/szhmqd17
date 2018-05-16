@@ -15,5 +15,8 @@ accountRouter.get('/login',accountCtrl.getLoginPage)
 //处理浏览器想要图片验证码
 accountRouter.get('/vcode',accountCtrl.getVcodeImage)
 
+//处理浏览器想要注册页面
+accountRouter.get('/register',accountCtrl.getRegisterPage)
+
 //导出
 module.exports = accountRouter
