@@ -5,6 +5,7 @@
   <title>欢迎注册</title>
   <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.min.css">
   <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/md5.js"></script>
 </head>
 <body>
       <div class="container" style="margin-top:180px; ">
@@ -37,4 +38,24 @@
             </div>
     </div>
 </body>
+<script>
+    //注册操作
+    function register(){
+        var url = "/account/register"
+
+        var password = $.md5($("#passwordId").val()+"HM17NIUBI")
+
+        //发送注册请求
+        $.post(url,{
+            username:$("#usernameId").val(),
+            password:password
+        },function(data,status){
+            if(data.status!=0){//失败
+                alert(data.message)
+            }else{
+                window.location.href = "/account/login"
+            }
+        })
+    }
+</script>
 </html>

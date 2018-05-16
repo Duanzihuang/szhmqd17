@@ -1,9 +1,13 @@
 //导入
 const express = require('express')
 const path = require('path')
+const bodyParser = require('body-parser')
 
 //create app
 const app = express()
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
 
 //设置内置中间件，对我们的静态资源进行处理
 app.use(express.static(path.join(__dirname,"statics")))

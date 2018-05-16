@@ -18,5 +18,8 @@ accountRouter.get('/vcode',accountCtrl.getVcodeImage)
 //处理浏览器想要注册页面
 accountRouter.get('/register',accountCtrl.getRegisterPage)
 
+//处理浏览器注册用户的请求
+accountRouter.post('/register',accountCtrl.register)
+
 //导出
 module.exports = accountRouter
