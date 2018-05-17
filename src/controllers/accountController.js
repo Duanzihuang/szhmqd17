@@ -28,7 +28,12 @@ exports.getVcodeImage = (req, res) => {
     /**
      * 在这里生成一张带有数字的图片，并且通过res返回给浏览器
      */
-    var p = new captchapng(80, 30, parseInt(Math.random() * 9000 + 1000)); // width,height,numeric captcha
+    const vcode = parseInt(Math.random() * 9000 + 1000)
+    
+    //把生成好的验证码，存在session中
+    req.session.vcode = vcode
+
+    var p = new captchapng(80, 30, vcode); // width,height,numeric captcha
     p.color(0, 0, 0, 0);  // First color: background (red, green, blue, alpha)
     p.color(80, 80, 80, 255); // Second color: paint (red, green, blue, alpha)
 
@@ -55,7 +60,7 @@ exports.register = (req,res)=>{
         status:0, //0代表成功，1代表用户名存在
         message:"注册成功"
     }
-
+    
     // Use connect method to connect to the server
     //异步函数要想做什么事情，一定要在回调函数中做
     MongoClient.connect(url, function(err, client) {
@@ -97,4 +102,41 @@ exports.register = (req,res)=>{
     //res.setHeader("Content-Type","application/json;charset=utf-8")
     //res.end(JSON.stringify(result))
     // res.json(result)
+}
+
+exports.login = (req,res)=>{
+    const result = {
+        status:0, //0代表成功，1验证码不正确，2代表用户名或密码错误
+        message:"注册成功"
+    }
+
+    //校验验证码
+    if(req.session.vcode!=req.body.vcode){
+        result.status = 1
+        result.message = "验证码不正确"
+
+        
+        res.json(result)
+
+        return
+    }
+
+    //校验用户名和密码
+    MongoClient.connect(url, function(err, client) {   
+        //拿到数据库    
+        const db = client.db(dbName)
+
+        //拿到要操作的集合
+        const collection = db.collection('accountInfo')
+
+        collection.findOne({username:req.body.username,password:req.body.password},(err,doc)=>{
+            if(doc==null){
+                result.status = 2
+                result.message = "用户名或密码错误"
+            }
+
+            res.json(result)
+            client.close();
+        })
+      });
 }

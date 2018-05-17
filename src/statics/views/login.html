@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
     <script src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/md5.js"></script>
     <title>登录页面</title>
 </head>
 <body>
@@ -58,6 +59,27 @@
     //注册
     function register(){
         window.location.href = "/account/register"
+    }
+
+    //登录操作
+    function login(){
+        var url = "/account/login"
+
+        var password = $.md5($("#passwordId").val()+"HM17NIUBI")
+
+        //发送注册请求
+        $.post(url,{
+            username:$("#usernameId").val(),
+            password:password,
+            vcode:$("#vcodeId").val()
+        },function(data,status){
+            if(data.status!=0){//失败
+                alert(data.message)
+                $("#vcodeimg").attr('src','/account/vcode?id='+Math.random())
+            }else{
+                window.location.href = "/studentmanager/list"
+            }
+        })
     }
 </script>
 </html>
