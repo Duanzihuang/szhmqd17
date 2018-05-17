@@ -1,12 +1,6 @@
 const path = require('path')
 const captchapng = require('captchapng')
-const MongoClient = require('mongodb').MongoClient
-
-// Connection URL
-const url = 'mongodb://localhost:27017'
-
-// Database Name
-const dbName = 'szhmqd17'
+const databasetool = require(path.join(__dirname, "../tools/databasetool.js"))
 
 /**
  * 暴露的返回登录页面的方法 
@@ -63,35 +57,22 @@ exports.register = (req,res)=>{
     
     // Use connect method to connect to the server
     //异步函数要想做什么事情，一定要在回调函数中做
-    MongoClient.connect(url, function(err, client) {
-        //拿到数据库
-        const db = client.db(dbName)
-
-        //拿到集合
-        const collection = db.collection('accountInfo')
-
-        //根据传递过来的用户名去查询，看用户名存不存在
-        collection.findOne({username:req.body.username},(err,doc)=>{
-            if(doc==null){//不存在，插入到数据库中
-                collection.insertOne(req.body,(err,result2)=>{
-                    if(err){
-                        result.status = 2
-                        result.message = "注册失败"
-                    }
-                    
-                    client.close();
-                    res.json(result)
-                })
-
-            }else{
-                client.close();
-
-                result.status = 1
-                result.message = "用户名已存在"
-
+    databasetool.getOne("accountInfo",{username:req.body.username},(err,doc)=>{
+        if(doc==null){//不存在，插入到数据库中
+            databasetool.insertOne("accountInfo",req.body,(err,result2)=>{
+                if(err){
+                    result.status = 2
+                    result.message = "注册失败"
+                }
+                
                 res.json(result)
-            }
-        })
+            })
+        }else{
+            result.status = 1
+            result.message = "用户名已存在"
+
+            res.json(result)
+        }
     })
 
     //伪代码
@@ -122,21 +103,12 @@ exports.login = (req,res)=>{
     }
 
     //校验用户名和密码
-    MongoClient.connect(url, function(err, client) {   
-        //拿到数据库    
-        const db = client.db(dbName)
+    databasetool.getOne("accountInfo",{username:req.body.username,password:req.body.password},(err,doc)=>{
+        if(doc==null){
+            result.status = 2
+            result.message = "用户名或密码错误"
+        }
 
-        //拿到要操作的集合
-        const collection = db.collection('accountInfo')
-
-        collection.findOne({username:req.body.username,password:req.body.password},(err,doc)=>{
-            if(doc==null){
-                result.status = 2
-                result.message = "用户名或密码错误"
-            }
-
-            res.json(result)
-            client.close();
-        })
-      });
+        res.json(result)
+    })
 }
