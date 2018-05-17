@@ -10,7 +10,8 @@ exports.getStudentListPage = (req, res) => {
         //利用模版引擎渲染页面，并且最终返回给浏览器去呈现
         xtpl.renderFile(path.join(__dirname, "../statics/views/list.html"), {
             students: docs,
-            keyword
+            keyword,
+            loginedName:req.session.loginedName
         }, function (error, content) {
             res.send(content)
         });
@@ -21,6 +22,7 @@ exports.getStudentListPage = (req, res) => {
 exports.getAddStudentPage = (req,res)=>{
     //利用模版引擎渲染页面，并且最终返回给浏览器去呈现
     xtpl.renderFile(path.join(__dirname, "../statics/views/add.html"), {
+        loginedName:req.session.loginedName
     }, function (error, content) {
         res.send(content)
     });
@@ -44,7 +46,8 @@ exports.getEditStudentPage = (req,res)=>{
 
     databasetool.getOne("studentInfo",{_id:studentId},(err,doc)=>{
         xtpl.renderFile(path.join(__dirname,"../statics/views/edit.html"),{
-            studentInfo:doc
+            studentInfo:doc,
+            loginedName:req.session.loginedName
         },(err,content)=>{
             res.send(content)
         })

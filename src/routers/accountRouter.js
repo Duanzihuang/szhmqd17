@@ -24,5 +24,8 @@ accountRouter.post('/register',accountCtrl.register)
 //处理浏览器用户的登录请求
 accountRouter.post('/login',accountCtrl.login)
 
+//登出
+accountRouter.get('/logout',accountCtrl.logout)
+
 //导出
 module.exports = accountRouter

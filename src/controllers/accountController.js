@@ -107,8 +107,16 @@ exports.login = (req,res)=>{
         if(doc==null){
             result.status = 2
             result.message = "用户名或密码错误"
+        }else{//登录成功
+            req.session.loginedName = req.body.username
         }
 
         res.json(result)
     })
+}
+
+exports.logout = (req,res)=>{
+    req.session.loginedName = null
+    
+    res.send("<script>window.location='/account/login'</script>")
 }
